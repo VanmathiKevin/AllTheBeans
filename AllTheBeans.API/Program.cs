@@ -1,8 +1,14 @@
 using AllTheBeans.Application.Mapping;
+using AllTheBeans.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// EF Core
+builder.Services.AddDbContext<BeansDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
 //AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
