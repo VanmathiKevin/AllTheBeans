@@ -11,5 +11,6 @@ namespace AllTheBeans.Application.Interfaces
         Task<bool> UpdateAsync(int id, CreateCoffeeBeanDto beanDto);
         Task<bool> DeleteAsync(int id);
         Task<IEnumerable<CoffeeBeanDto>> SearchAsync(string query);
+        Task<CoffeeBeanDto> GetBeanOfTheDayAsync();
     }
 }

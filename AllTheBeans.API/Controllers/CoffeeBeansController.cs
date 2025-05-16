@@ -48,10 +48,17 @@ namespace AllTheBeans.API.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery] string q)
+        public async Task<IActionResult> Search([FromQuery] string query)
         {
-            var results = await _coffeeBeanService.SearchAsync(q);
+            var results = await _coffeeBeanService.SearchAsync(query);
             return Ok(results);
+        }
+
+        [HttpGet("bean-of-the-day")]
+        public async Task<IActionResult> GetBeanOfTheDay()
+        {
+            var botd = await _coffeeBeanService.GetBeanOfTheDayAsync();
+            return Ok(botd);
         }
     }
 }

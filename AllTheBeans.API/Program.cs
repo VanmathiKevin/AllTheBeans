@@ -20,6 +20,8 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 //Application Services
 builder.Services.AddScoped<ICoffeeBeanRepository, CoffeeBeanRepository>();
 builder.Services.AddScoped<ICoffeeBeanService, CoffeeBeanService>();
+builder.Services.AddScoped<IBeanOfTheDayRepository, BeanOfTheDayRepository>();
+builder.Services.AddScoped<IBeanSelectorService, BeanSelectorService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddControllers();
