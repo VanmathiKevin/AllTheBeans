@@ -39,5 +39,25 @@ namespace AllTheBeans.Application.Services
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<CoffeeBeanDto>(bean);
         }
+        public async Task<bool> UpdateAsync(int id, CreateCoffeeBeanDto dto)
+        {
+            var bean = await _coffeeBeanRepo.GetByIdAsync(id);
+            if (bean is null) return false;
+
+            _mapper.Map(dto, bean);
+            await _coffeeBeanRepo.UpdateAsync(bean);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var bean = await _coffeeBeanRepo.GetByIdAsync(id);
+            if (bean is null) return false;
+
+            await _coffeeBeanRepo.DeleteAsync(bean);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
     }
 }

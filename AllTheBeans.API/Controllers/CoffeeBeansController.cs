@@ -32,5 +32,19 @@ namespace AllTheBeans.API.Controllers
             var result = await _coffeeBeanService.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] CreateCoffeeBeanDto dto)
+        {
+            var success = await _coffeeBeanService.UpdateAsync(id, dto);
+            return success ? NoContent() : NotFound();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var success = await _coffeeBeanService.DeleteAsync(id);
+            return success ? NoContent() : NotFound();
+        }
     }
 }

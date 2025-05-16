@@ -19,5 +19,15 @@ namespace AllTheBeans.Infrastructure.Repositories
 
         public async Task AddAsync(CoffeeBean bean) =>
             await _context.CoffeeBeans.AddAsync(bean);
+        public Task UpdateAsync(CoffeeBean bean)
+        {
+            _context.CoffeeBeans.Update(bean);
+            return Task.CompletedTask;
+        }
+        public Task DeleteAsync(CoffeeBean bean)
+        {
+            _context.CoffeeBeans.Remove(bean);
+            return Task.CompletedTask;
+        }
     }
 }
