@@ -20,6 +20,13 @@ namespace AllTheBeans.Infrastructure.Data
                       .HasPrecision(18, 4); // precision 18, scale 4
             });
 
+            //Configure relationship between BeanOfTheDay and CoffeeBean
+            modelBuilder.Entity<BeanOfTheDay>()
+                .HasOne(b => b.CoffeeBean)
+                .WithMany(b => b.BeanOfTheDayHistory)
+                .HasForeignKey(b => b.CoffeeBeanId);
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
