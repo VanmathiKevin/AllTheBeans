@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AllTheBeans.Application\AllTheBeans.Application.csproj" />
     <ProjectReference Include="..\AllTheBeans.Domain\AllTheBeans.Domain.csproj" />
   </ItemGroup>
 
