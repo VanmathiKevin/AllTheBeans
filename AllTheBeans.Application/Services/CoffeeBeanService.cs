@@ -59,5 +59,10 @@ namespace AllTheBeans.Application.Services
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
+        public async Task<IEnumerable<CoffeeBeanDto>> SearchAsync(string query)
+        {
+            var results = await _coffeeBeanRepo.SearchAsync(query);
+            return _mapper.Map<IEnumerable<CoffeeBeanDto>>(results);
+        }
     }
 }

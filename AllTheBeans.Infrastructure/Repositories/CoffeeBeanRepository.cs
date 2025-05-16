@@ -29,5 +29,13 @@ namespace AllTheBeans.Infrastructure.Repositories
             _context.CoffeeBeans.Remove(bean);
             return Task.CompletedTask;
         }
+        public async Task<IEnumerable<CoffeeBean>> SearchAsync(string keyword)
+        {
+            return await _context.CoffeeBeans
+                .Where(b => b.Name.Contains(keyword) ||
+                            b.Country.Contains(keyword) ||
+                            b.Colour.Contains(keyword))
+                .ToListAsync();
+        }
     }
 }

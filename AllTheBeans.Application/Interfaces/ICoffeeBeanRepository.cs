@@ -10,5 +10,6 @@ namespace AllTheBeans.Application.Interfaces
         Task AddAsync(CoffeeBean bean);
         Task UpdateAsync(CoffeeBean bean);
         Task DeleteAsync(CoffeeBean bean);
+        Task<IEnumerable<CoffeeBean>> SearchAsync(string keyword);
     }
 }

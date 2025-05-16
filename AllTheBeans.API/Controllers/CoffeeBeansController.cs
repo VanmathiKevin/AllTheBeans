@@ -46,5 +46,12 @@ namespace AllTheBeans.API.Controllers
             var success = await _coffeeBeanService.DeleteAsync(id);
             return success ? NoContent() : NotFound();
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string q)
+        {
+            var results = await _coffeeBeanService.SearchAsync(q);
+            return Ok(results);
+        }
     }
 }
