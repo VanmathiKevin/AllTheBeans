@@ -1,5 +1,6 @@
 using AllTheBeans.Application.Interfaces;
 using AllTheBeans.Application.Mapping;
+using AllTheBeans.Application.Services;
 using AllTheBeans.Infrastructure.Data;
 using AllTheBeans.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 //Application Services
 builder.Services.AddScoped<ICoffeeBeanRepository, CoffeeBeanRepository>();
+builder.Services.AddScoped<ICoffeeBeanService, CoffeeBeanService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
