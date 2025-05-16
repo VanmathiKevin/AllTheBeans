@@ -14,4 +14,8 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AllTheBeans.Application\AllTheBeans.Application.csproj" />
+  </ItemGroup>
+
 </Project>
