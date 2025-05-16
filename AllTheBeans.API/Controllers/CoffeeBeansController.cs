@@ -9,10 +9,12 @@ namespace AllTheBeans.API.Controllers
     public class CoffeeBeansController : ControllerBase
     {
         private readonly ICoffeeBeanService _coffeeBeanService;
+        private readonly ILogger<CoffeeBeansController> _logger;
 
-        public CoffeeBeansController(ICoffeeBeanService coffeeBeanService)
+        public CoffeeBeansController(ICoffeeBeanService coffeeBeanService, ILogger<CoffeeBeansController> logger)
         {
             _coffeeBeanService = coffeeBeanService;
+            _logger = logger;
         }
 
         [HttpGet]
