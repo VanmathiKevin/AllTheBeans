@@ -7,5 +7,6 @@ namespace AllTheBeans.Application.Interfaces
     {
         Task<IEnumerable<CoffeeBean>> GetAllAsync();
         Task<CoffeeBean?> GetByIdAsync(int id);
+        Task AddAsync(CoffeeBean bean);
     }
 }

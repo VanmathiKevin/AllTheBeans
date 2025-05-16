@@ -16,5 +16,8 @@ namespace AllTheBeans.Infrastructure.Repositories
 
         public async Task<CoffeeBean?> GetByIdAsync(int id) =>
             await _context.CoffeeBeans.FindAsync(id);
+
+        public async Task AddAsync(CoffeeBean bean) =>
+            await _context.CoffeeBeans.AddAsync(bean);
     }
 }

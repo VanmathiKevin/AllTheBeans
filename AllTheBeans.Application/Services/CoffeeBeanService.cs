@@ -1,6 +1,7 @@
 ﻿
 using AllTheBeans.Application.DTOs;
 using AllTheBeans.Application.Interfaces;
+using AllTheBeans.Domain.Models;
 using AutoMapper;
 
 namespace AllTheBeans.Application.Services
@@ -8,14 +9,17 @@ namespace AllTheBeans.Application.Services
     public class CoffeeBeanService : ICoffeeBeanService
     {
         private readonly ICoffeeBeanRepository _coffeeBeanRepo;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
         public CoffeeBeanService(
             ICoffeeBeanRepository coffeeBeanRepo,
-            IMapper mapper)
+            IMapper mapper,
+            IUnitOfWork unitOfWork)
         {
             _coffeeBeanRepo = coffeeBeanRepo;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
         public async Task<IEnumerable<CoffeeBeanDto>> GetAllBeansAsync()
         {
@@ -27,6 +31,13 @@ namespace AllTheBeans.Application.Services
         {
             var bean = await _coffeeBeanRepo.GetByIdAsync(id);
             return bean is null ? null : _mapper.Map<CoffeeBeanDto>(bean);
+        }
+        public async Task<CoffeeBeanDto> CreateAsync(CreateCoffeeBeanDto dto)
+        {
+            var bean = _mapper.Map<CoffeeBean>(dto);
+            await _coffeeBeanRepo.AddAsync(bean);
+            await _unitOfWork.SaveChangesAsync();
+            return _mapper.Map<CoffeeBeanDto>(bean);
         }
     }
 }

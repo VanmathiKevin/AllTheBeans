@@ -3,6 +3,7 @@ using AllTheBeans.Application.Mapping;
 using AllTheBeans.Application.Services;
 using AllTheBeans.Infrastructure.Data;
 using AllTheBeans.Infrastructure.Repositories;
+using AllTheBeans.Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 //Application Services
 builder.Services.AddScoped<ICoffeeBeanRepository, CoffeeBeanRepository>();
 builder.Services.AddScoped<ICoffeeBeanService, CoffeeBeanService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
