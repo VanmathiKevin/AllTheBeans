@@ -5,6 +5,8 @@ VisualStudioVersion = 17.13.35931.197 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllTheBeans.API", "AllTheBeans.API\AllTheBeans.API.csproj", "{185385C2-FF4B-432F-8905-7806807A33EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllTheBeans.Domain", "AllTheBeans.Domain\AllTheBeans.Domain.csproj", "{DFFD9FB2-ABAA-4957-955C-4F8106AFCAED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{185385C2-FF4B-432F-8905-7806807A33EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{185385C2-FF4B-432F-8905-7806807A33EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{185385C2-FF4B-432F-8905-7806807A33EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFFD9FB2-ABAA-4957-955C-4F8106AFCAED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFFD9FB2-ABAA-4957-955C-4F8106AFCAED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFFD9FB2-ABAA-4957-955C-4F8106AFCAED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFFD9FB2-ABAA-4957-955C-4F8106AFCAED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
