@@ -3,6 +3,7 @@ using AllTheBeans.Application.DTOs;
 using AllTheBeans.Application.Interfaces;
 using AllTheBeans.Domain.Models;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 
 namespace AllTheBeans.Application.Services
 {
@@ -13,71 +14,100 @@ namespace AllTheBeans.Application.Services
         private readonly IBeanSelectorService _beanSelectorService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-       
+        private readonly ILogger<CoffeeBeanService> _logger;
+
         public CoffeeBeanService(
             ICoffeeBeanRepository coffeeBeanRepo,
             IBeanOfTheDayRepository beanOfTheDayRepo,
             IBeanSelectorService beanSelectorService,
             IMapper mapper,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ILogger<CoffeeBeanService> logger)
         {
             _coffeeBeanRepo = coffeeBeanRepo;
             _beanOfTheDayRepo = beanOfTheDayRepo;
             _beanSelectorService = beanSelectorService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
         public async Task<IEnumerable<CoffeeBeanDto>> GetAllBeansAsync()
         {
+            _logger.LogInformation("Fetching all coffee beans from the repository.");
             var beans = await _coffeeBeanRepo.GetAllAsync();
             return _mapper.Map<IEnumerable<CoffeeBeanDto>>(beans);
         }
 
-        public async Task<CoffeeBeanDto?> GetByIdAsync(int id)
+        public async Task<CoffeeBeanDto?> GetBeanByIdAsync(int id)
         {
+            _logger.LogInformation("Fetching coffee bean with ID {Id}", id);
             var bean = await _coffeeBeanRepo.GetByIdAsync(id);
-            return bean is null ? null : _mapper.Map<CoffeeBeanDto>(bean);
+            if(bean == null)
+            {
+                _logger.LogWarning("Coffee bean with ID {Id} not found", id);
+                return null;
+            }
+
+            return _mapper.Map<CoffeeBeanDto>(bean);
         }
-        public async Task<CoffeeBeanDto> CreateAsync(CreateCoffeeBeanDto dto)
+        public async Task<CoffeeBeanDto> CreateBeanAsync(CreateCoffeeBeanDto dto)
         {
+            _logger.LogInformation("Creating a new coffee bean: {@Dto}", dto);
             var bean = _mapper.Map<CoffeeBean>(dto);
             await _coffeeBeanRepo.AddAsync(bean);
             await _unitOfWork.SaveChangesAsync();
+            _logger.LogInformation("Coffee bean created successfully with ID {Id}", bean.Id);
+
             return _mapper.Map<CoffeeBeanDto>(bean);
         }
-        public async Task<bool> UpdateAsync(int id, CreateCoffeeBeanDto dto)
+        public async Task<bool> UpdateBeanAsync(int id, CreateCoffeeBeanDto dto)
         {
+            _logger.LogInformation("Updating coffee bean with ID {Id}", id);
             var bean = await _coffeeBeanRepo.GetByIdAsync(id);
             if (bean is null) return false;
 
             _mapper.Map(dto, bean);
             await _coffeeBeanRepo.UpdateAsync(bean);
             await _unitOfWork.SaveChangesAsync();
+            _logger.LogInformation("Coffee bean with ID {Id} updated successfully", id);
+
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteBeanAsync(int id)
         {
+            _logger.LogInformation("Deleting coffee bean with ID {Id}", id);
             var bean = await _coffeeBeanRepo.GetByIdAsync(id);
-            if (bean is null) return false;
+            if (bean == null)
+            {
+                _logger.LogWarning("Cannot delete: coffee bean with ID {Id} not found", id);
+                return false;
+            }
 
             await _coffeeBeanRepo.DeleteAsync(bean);
             await _unitOfWork.SaveChangesAsync();
+            _logger.LogInformation("Coffee bean with ID {Id} deleted successfully", id);
             return true;
         }
-        public async Task<IEnumerable<CoffeeBeanDto>> SearchAsync(string query)
+        public async Task<IEnumerable<CoffeeBeanDto>> SearchBeansAsync(string query)
         {
+            _logger.LogInformation("Searching coffee beans with query: {Query}", query);
             var results = await _coffeeBeanRepo.SearchAsync(query);
             return _mapper.Map<IEnumerable<CoffeeBeanDto>>(results);
         }
 
         public async Task<CoffeeBeanDto> GetBeanOfTheDayAsync()
         {
+            _logger.LogInformation("Fetching Bean of the Day");
             var today = DateTime.UtcNow.Date;
 
             var existing = await _beanOfTheDayRepo.GetByDateAsync(today);
             if (existing != null)
+            {
+                _logger.LogInformation("Bean of the Day already selected: {BeanId}", existing.CoffeeBeanId);
                 return _mapper.Map<CoffeeBeanDto>(existing.CoffeeBean);
+            }
+                
 
             var allBeans = await _coffeeBeanRepo.GetAllAsync();
             var previousBean = await _beanOfTheDayRepo.GetPreviousDayAsync();
@@ -92,7 +122,7 @@ namespace AllTheBeans.Application.Services
 
             await _beanOfTheDayRepo.AddAsync(newBeanOfTheDay);
             await _unitOfWork.SaveChangesAsync();
-
+            _logger.LogInformation("New Bean of the Day selected: {BeanId}", selectedBean.Id);
             return _mapper.Map<CoffeeBeanDto>(selectedBean);
         }
     }

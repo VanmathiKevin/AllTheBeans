@@ -10,6 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+//Logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.SetMinimumLevel(LogLevel.Information);
+
 // EF Core
 builder.Services.AddDbContext<BeansDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));

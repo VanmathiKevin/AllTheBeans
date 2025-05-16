@@ -6,11 +6,11 @@ namespace AllTheBeans.Application.Interfaces
     public interface ICoffeeBeanService
     {
         Task<IEnumerable<CoffeeBeanDto>> GetAllBeansAsync();
-        Task<CoffeeBeanDto?> GetByIdAsync(int id);
-        Task<CoffeeBeanDto> CreateAsync(CreateCoffeeBeanDto beanDto);
-        Task<bool> UpdateAsync(int id, CreateCoffeeBeanDto beanDto);
-        Task<bool> DeleteAsync(int id);
-        Task<IEnumerable<CoffeeBeanDto>> SearchAsync(string query);
+        Task<CoffeeBeanDto?> GetBeanByIdAsync(int id);
+        Task<CoffeeBeanDto> CreateBeanAsync(CreateCoffeeBeanDto beanDto);
+        Task<bool> UpdateBeanAsync(int id, CreateCoffeeBeanDto beanDto);
+        Task<bool> DeleteBeanAsync(int id);
+        Task<IEnumerable<CoffeeBeanDto>> SearchBeansAsync(string query);
         Task<CoffeeBeanDto> GetBeanOfTheDayAsync();
     }
 }

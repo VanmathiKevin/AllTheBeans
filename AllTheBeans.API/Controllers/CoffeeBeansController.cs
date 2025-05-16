@@ -22,35 +22,35 @@ namespace AllTheBeans.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var bean = await _coffeeBeanService.GetByIdAsync(id);
+            var bean = await _coffeeBeanService.GetBeanByIdAsync(id);
             return bean == null ? NotFound() : Ok(bean);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCoffeeBeanDto dto)
         {
-            var result = await _coffeeBeanService.CreateAsync(dto);
+            var result = await _coffeeBeanService.CreateBeanAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] CreateCoffeeBeanDto dto)
         {
-            var success = await _coffeeBeanService.UpdateAsync(id, dto);
+            var success = await _coffeeBeanService.UpdateBeanAsync(id, dto);
             return success ? NoContent() : NotFound();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var success = await _coffeeBeanService.DeleteAsync(id);
+            var success = await _coffeeBeanService.DeleteBeanAsync(id);
             return success ? NoContent() : NotFound();
         }
 
         [HttpGet("search")]
         public async Task<IActionResult> Search([FromQuery] string query)
         {
-            var results = await _coffeeBeanService.SearchAsync(query);
+            var results = await _coffeeBeanService.SearchBeansAsync(query);
             return Ok(results);
         }
 
