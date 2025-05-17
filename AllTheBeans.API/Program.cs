@@ -1,3 +1,4 @@
+using AllTheBeans.API.Middleware;
 using AllTheBeans.Application.Interfaces;
 using AllTheBeans.Application.Mapping;
 using AllTheBeans.Application.Services;
@@ -45,6 +46,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+//Exception
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthorization();
 
