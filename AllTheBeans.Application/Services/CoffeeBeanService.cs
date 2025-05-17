@@ -60,7 +60,7 @@ namespace AllTheBeans.Application.Services
 
             return _mapper.Map<CoffeeBeanDto>(bean);
         }
-        public async Task<bool> UpdateBeanAsync(int id, CreateCoffeeBeanDto dto)
+        public async Task<bool> UpdateBeanAsync(int id, CoffeeBeanDto dto)
         {
             _logger.LogInformation("Updating coffee bean with ID {Id}", id);
             var bean = await _coffeeBeanRepo.GetBeanByIdAsync(id);
