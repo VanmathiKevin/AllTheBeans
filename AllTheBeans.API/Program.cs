@@ -30,6 +30,7 @@ builder.Services.AddScoped<ICoffeeBeanService, CoffeeBeanService>();
 builder.Services.AddScoped<IBeanOfTheDayRepository, BeanOfTheDayRepository>();
 builder.Services.AddScoped<IBeanSelectorService, BeanSelectorService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient<DbSeeder>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -57,8 +58,8 @@ app.MapControllers();
 //Load Seed data
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<BeansDbContext>();
-    await DbSeeder.SeedAsync(db);
+    var seeder = scope.ServiceProvider.GetRequiredService<DbSeeder>();
+    await seeder.SeedAsync();
 }
 
 app.Run();

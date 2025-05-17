@@ -11,7 +11,6 @@ namespace AllTheBeans.Application.Mapping
         {
             CreateMap<CoffeeBean, CoffeeBeanDto>().ReverseMap();
             CreateMap<CreateCoffeeBeanDto, CoffeeBean>();
-
         }
     }
 }
