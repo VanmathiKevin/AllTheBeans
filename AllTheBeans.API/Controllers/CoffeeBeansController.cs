@@ -1,11 +1,13 @@
 ﻿using AllTheBeans.Application.DTOs;
 using AllTheBeans.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AllTheBeans.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class CoffeeBeansController : ControllerBase
     {
         private readonly ICoffeeBeanService _coffeeBeanService;

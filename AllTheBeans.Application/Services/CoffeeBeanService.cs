@@ -12,7 +12,7 @@ namespace AllTheBeans.Application.Services
     {
         private readonly ICoffeeBeanRepository _coffeeBeanRepo;
         private readonly IBeanOfTheDayRepository _beanOfTheDayRepo;
-        private readonly IBeanSelectorService _beanSelectorService;
+        private readonly IBeanSelectionStrategy _beanSelectionStrategy;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<CoffeeBeanService> _logger;
@@ -20,14 +20,14 @@ namespace AllTheBeans.Application.Services
         public CoffeeBeanService(
             ICoffeeBeanRepository coffeeBeanRepo,
             IBeanOfTheDayRepository beanOfTheDayRepo,
-            IBeanSelectorService beanSelectorService,
+            IBeanSelectionStrategy beanSelectionStrategy,
             IMapper mapper,
             IUnitOfWork unitOfWork,
             ILogger<CoffeeBeanService> logger)
         {
             _coffeeBeanRepo = coffeeBeanRepo;
             _beanOfTheDayRepo = beanOfTheDayRepo;
-            _beanSelectorService = beanSelectorService;
+            _beanSelectionStrategy = beanSelectionStrategy;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -145,7 +145,7 @@ namespace AllTheBeans.Application.Services
                 var allBeans = await _coffeeBeanRepo.GetAllBeansAsync();
                 var previousBean = await _beanOfTheDayRepo.GetPreviousDayBeanAsync();
 
-                var selectedBean = await _beanSelectorService.SelectBeanAsync(allBeans, previousBean?.CoffeeBean);
+                var selectedBean = await _beanSelectionStrategy.SelectBeanAsync(allBeans, previousBean?.CoffeeBean);
 
                 var newBeanOfTheDay = new BeanOfTheDay
                 {

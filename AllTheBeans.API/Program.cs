@@ -2,10 +2,14 @@ using AllTheBeans.API.Middleware;
 using AllTheBeans.Application.Interfaces;
 using AllTheBeans.Application.Mapping;
 using AllTheBeans.Application.Services;
+using AllTheBeans.Application.Strategy;
 using AllTheBeans.Infrastructure.Data;
 using AllTheBeans.Infrastructure.Repositories;
 using AllTheBeans.Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +25,68 @@ builder.Logging.SetMinimumLevel(LogLevel.Information);
 builder.Services.AddDbContext<BeansDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
+//JWT token
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
+
+//Swagger Auth
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Paste JWT token here with 'Bearer ' prefix",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] { }
+            }
+        });
+});
+
+//CORS
+var swaggerOrigin = "https://localhost:44312/";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSwagger",
+        policy =>
+        {
+            policy.WithOrigins(swaggerOrigin)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+
+
 //AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
@@ -28,7 +94,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddScoped<ICoffeeBeanRepository, CoffeeBeanRepository>();
 builder.Services.AddScoped<ICoffeeBeanService, CoffeeBeanService>();
 builder.Services.AddScoped<IBeanOfTheDayRepository, BeanOfTheDayRepository>();
-builder.Services.AddScoped<IBeanSelectorService, BeanSelectorService>();
+builder.Services.AddScoped<IBeanSelectionStrategy, RandomBeanSelectionStrategy>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<DbSeeder>();
 
@@ -50,6 +116,8 @@ app.UseHttpsRedirection();
 
 //Exception
 app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
