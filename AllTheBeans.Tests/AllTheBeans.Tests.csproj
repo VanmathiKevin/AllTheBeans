@@ -20,12 +20,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AllTheBeans.API\AllTheBeans.API.csproj" />
     <ProjectReference Include="..\AllTheBeans.Application\AllTheBeans.Application.csproj" />
     <ProjectReference Include="..\AllTheBeans.Domain\AllTheBeans.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Middleware\" />
+    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>
