@@ -70,12 +70,12 @@ namespace AllTheBeans.Application.Services
 
             return _mapper.Map<CoffeeBeanDto>(bean);
         }
-        public async Task<bool> UpdateBeanAsync(int id, CoffeeBeanDto dto)
+        public async Task<bool> UpdateBeanAsync(int id, CreateCoffeeBeanDto dto)
         {
             _logger.LogInformation("Updating coffee bean with ID {Id}", id);
             var bean = await _coffeeBeanRepo.GetBeanByIdAsync(id);
 
-            if (bean is null)
+            if (bean == null)
             {
                 _logger.LogWarning("Cannot update: coffee bean with ID {Id} not found", id);
                 throw new NotFoundException($"Coffee bean with ID {id} not found.");

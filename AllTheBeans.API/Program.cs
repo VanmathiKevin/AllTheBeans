@@ -5,6 +5,7 @@ using AllTheBeans.Application.Services;
 using AllTheBeans.Application.Strategy;
 using AllTheBeans.Infrastructure.Data;
 using AllTheBeans.Infrastructure.Repositories;
+using AllTheBeans.Infrastructure.Services;
 using AllTheBeans.Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -85,6 +86,9 @@ builder.Services.AddCors(options =>
         });
 });
 
+//In-memory Cache
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped<ICacheService, MemoryCacheService>();
 
 
 //AutoMapper

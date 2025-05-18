@@ -8,7 +8,7 @@ namespace AllTheBeans.Application.Interfaces
         Task<IEnumerable<CoffeeBeanDto>> GetAllBeansAsync();
         Task<CoffeeBeanDto?> GetBeanByIdAsync(int id);
         Task<CoffeeBeanDto> CreateBeanAsync(CreateCoffeeBeanDto beanDto);
-        Task<bool> UpdateBeanAsync(int id, CoffeeBeanDto beanDto);
+        Task<bool> UpdateBeanAsync(int id, CreateCoffeeBeanDto beanDto);
         Task<bool> DeleteBeanAsync(int id);
         Task<IEnumerable<CoffeeBeanDto>> SearchBeansAsync(string query);
         Task<CoffeeBeanDto> GetBeanOfTheDayAsync();

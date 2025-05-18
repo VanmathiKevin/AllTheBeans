@@ -12,11 +12,13 @@ namespace AllTheBeans.API.Controllers
     {
         private readonly ICoffeeBeanService _coffeeBeanService;
         private readonly ILogger<CoffeeBeansController> _logger;
+        private readonly ICacheService _cacheService;
 
-        public CoffeeBeansController(ICoffeeBeanService coffeeBeanService, ILogger<CoffeeBeansController> logger)
+        public CoffeeBeansController(ICoffeeBeanService coffeeBeanService, ILogger<CoffeeBeansController> logger, ICacheService cacheService)
         {
             _coffeeBeanService = coffeeBeanService;
             _logger = logger;
+            _cacheService = cacheService;
         }
 
         /// <summary>
@@ -27,7 +29,17 @@ namespace AllTheBeans.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             _logger.LogInformation("GET /api/coffeeBeans requested");
+            const string cacheKey = "AllCoffeeBeans";
+
+            var cached = await _cacheService.GetAsync<IEnumerable<CoffeeBeanDto>>(cacheKey);
+            if (cached != null)
+            {
+                _logger.LogInformation("Returned all beans from cache.");
+                return Ok(cached);
+            }
+
             var beans = await _coffeeBeanService.GetAllBeansAsync();
+            await _cacheService.SetAsync(cacheKey, beans, TimeSpan.FromMinutes(10));
             return Ok(beans);
         }
 
@@ -40,13 +52,17 @@ namespace AllTheBeans.API.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             _logger.LogInformation("GET /api/coffeeBeans/{Id} requested", id);
-            var bean = await _coffeeBeanService.GetBeanByIdAsync(id);
-            if(bean == null)
+            var cacheKey = $"CoffeeBean:{id}";
+
+            var cached = await _cacheService.GetAsync<CoffeeBeanDto>(cacheKey);
+            if (cached != null)
             {
-                _logger.LogWarning("Coffee bean with ID {Id} not found", id);
-                return NotFound();
+                _logger.LogInformation("Returned coffee bean with ID {Id} from cache", id);
+                return Ok(cached);
             }
 
+            var bean = await _coffeeBeanService.GetBeanByIdAsync(id);
+            await _cacheService.SetAsync(cacheKey, bean, TimeSpan.FromMinutes(10));
             return Ok(bean);
         }
 
@@ -66,8 +82,9 @@ namespace AllTheBeans.API.Controllers
             }
 
             var result = await _coffeeBeanService.CreateBeanAsync(dto);
-            _logger.LogInformation("Coffee bean created successfully: {Name} with ID {id}", dto.Name, result.Id);
+            await _cacheService.RemoveAsync("AllCoffeeBeans");
 
+            _logger.LogInformation("Coffee bean created successfully: {Name} with ID {id}", dto.Name, result.Id);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
@@ -75,27 +92,18 @@ namespace AllTheBeans.API.Controllers
         /// Update an existing coffee bean.
         /// </summary>
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, [FromBody] CoffeeBeanDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] CreateCoffeeBeanDto dto)
         {
             _logger.LogInformation("PUT /api/coffeeBeans/{Id} requested with payload {@CoffeeBeanDto}", id, dto);
-
-            if (id != dto.Id)
-            {
-                ModelState.AddModelError("Id", "URL ID and payload ID must match.");
-                return BadRequest(ModelState);
-            }
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var isUpdated = await _coffeeBeanService.UpdateBeanAsync(id, dto);
-            if(!isUpdated)
-            {
-                _logger.LogWarning("Update failed: Coffee bean with ID {Id} not found", id);
-                return NotFound();
-            }
+            await _coffeeBeanService.UpdateBeanAsync(id, dto);
+            await _cacheService.RemoveAsync("AllCoffeeBeans");
+            await _cacheService.RemoveAsync($"CoffeeBean:{id}");
 
             _logger.LogInformation("Coffee bean with ID {Id} updated successfully", id);
             return NoContent();
@@ -111,12 +119,9 @@ namespace AllTheBeans.API.Controllers
         {
             _logger.LogInformation("DELETE /api/coffeeBeans/{Id} requested", id);
 
-            var isDeleted = await _coffeeBeanService.DeleteBeanAsync(id);
-            if (!isDeleted)
-            {
-                _logger.LogWarning("Delete failed: Coffee bean with ID {Id} not found", id);
-                return NotFound();
-            }
+            await _coffeeBeanService.DeleteBeanAsync(id);
+            await _cacheService.RemoveAsync("AllCoffeeBeans");
+            await _cacheService.RemoveAsync($"CoffeeBean:{id}");
 
             _logger.LogInformation("Coffee bean with ID {Id} deleted successfully", id);
             return NoContent();
@@ -130,7 +135,18 @@ namespace AllTheBeans.API.Controllers
         public async Task<IActionResult> Search([FromQuery] string query)
         {
             _logger.LogInformation("GET /api/coffeeBeans/search requested with query: {Query}", query);
+
+            var cacheKey = $"Search:{query.ToLower()}";
+
+            var cached = await _cacheService.GetAsync<IEnumerable<CoffeeBeanDto>>(cacheKey);
+            if (cached != null)
+            {
+                _logger.LogInformation("Returned search results for query '{Query}' from cache", query);
+                return Ok(cached);
+            }
+
             var result = await _coffeeBeanService.SearchBeansAsync(query);
+            await _cacheService.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5));
             return Ok(result);
         }
 
@@ -142,8 +158,22 @@ namespace AllTheBeans.API.Controllers
         public async Task<IActionResult> GetBeanOfTheDay()
         {
             _logger.LogInformation("GET /api/coffeeBeans/bean-of-the-day requested");
+
+            var cacheKey = $"BeanOfTheDay:{DateTime.UtcNow:yyyy-MM-dd}";
+
+            var cached = await _cacheService.GetAsync<CoffeeBeanDto>(cacheKey);
+            if (cached != null)
+            {
+                _logger.LogInformation("Returned Bean of the Day from cache: {BeanName}", cached.Name);
+                return Ok(cached);
+            }
+
             var bean = await _coffeeBeanService.GetBeanOfTheDayAsync();
+            await _cacheService.SetAsync(cacheKey, bean, TimeSpan.FromDays(1));
+
+            _logger.LogInformation("Bean of the Day cached: {BeanName}", bean.Name);
             return Ok(bean);
+            
         }
     }
 }
