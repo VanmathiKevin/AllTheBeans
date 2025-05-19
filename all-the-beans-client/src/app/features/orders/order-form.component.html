@@ -1,0 +1,39 @@
+<div class="container mt-4">
+    <h3>🛒 Order Coffee Bean</h3>
+  
+    <form *ngIf="!submitted" (ngSubmit)="submitOrder()">
+      <div class="mb-3">
+        <label for="bean" class="form-label">Select Coffee Bean</label>
+        <select class="form-select" [(ngModel)]="order.beanId" name="beanId" required>
+          <option value="" disabled selected>Select a bean</option>
+          <option *ngFor="let bean of beans" [value]="bean.id">
+            {{ bean.name }} ({{ bean.country }})
+          </option>
+        </select>
+      </div>
+  
+      <div class="mb-3">
+        <label class="form-label">Customer Name</label>
+        <input class="form-control" [(ngModel)]="order.customerName" name="customerName" required />
+      </div>
+  
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" [(ngModel)]="order.email" name="email" required />
+      </div>
+  
+      <div class="mb-3">
+        <label class="form-label">Quantity</label>
+        <input type="number" min="1" class="form-control" [(ngModel)]="order.quantity" name="quantity" required />
+      </div>
+  
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  
+      <button type="submit" class="btn btn-success">Submit Order</button>
+    </form>
+  
+    <div *ngIf="submitted" class="alert alert-success">
+      Your order has been submitted! Thank you for your purchase.
+    </div>
+  </div>
+  

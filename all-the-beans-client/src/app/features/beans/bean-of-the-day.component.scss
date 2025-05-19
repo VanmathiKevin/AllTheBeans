@@ -1,0 +1,33 @@
+.bean-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #4b2e2e;
+  
+    &::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 3px;
+      margin: 8px auto;
+      background-color: #c49a6c;
+      border-radius: 2px;
+    }
+  }
+  
+  .bean-highlight {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 12px;
+    overflow: hidden;
+  
+    &:hover {
+      transform: scale(1.02);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    }
+  }
+  
+  .bean-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+  }
+  
