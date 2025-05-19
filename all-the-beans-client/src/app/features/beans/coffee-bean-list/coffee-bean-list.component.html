@@ -1,0 +1,24 @@
+<div class="container">
+    <h2 class="mb-3">Available Coffee Beans</h2>
+  
+    <div *ngIf="loading">Loading...</div>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  
+    <div class="row" *ngIf="!loading && beans.length">
+      <div class="col-md-4 mb-4" *ngFor="let bean of beans">
+        <div class="card h-100 shadow-sm">
+            <a [routerLink]="['/beans', bean.id]">
+          <img [src]="bean.imageUrl" class="card-img-top" [alt]="bean.name">
+        </a>
+          <div class="card-body">
+            <h5 class="card-title">{{ bean.name }}</h5>
+            <p class="card-text">{{ bean.description }}</p>
+            <span class="badge bg-info text-dark">{{ bean.country }}</span>
+            <span class="badge bg-secondary">{{ bean.colour }}</span>
+            <div class="mt-2 fw-bold">£{{ bean.price | number: '1.2-2' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
