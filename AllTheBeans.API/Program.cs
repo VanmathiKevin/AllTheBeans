@@ -84,6 +84,8 @@ builder.Services.AddCors(options =>
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
+        options.AddPolicy("AllowFrontend",
+        b => b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
 //In-memory Cache
@@ -117,6 +119,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontend");
 
 //Exception
 app.UseMiddleware<ExceptionMiddleware>();
