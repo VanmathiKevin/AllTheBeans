@@ -102,9 +102,9 @@ namespace AllTheBeans.Infrastructure.Repositories
             try 
             {
                 return await _context.CoffeeBeans
-                .Where(b => b.Name.Contains(keyword) ||
-                            b.Country.Contains(keyword) ||
-                            b.Colour.Contains(keyword))
+                .Where(b => b.Name.ToLower().Contains(keyword) ||
+                            b.Country.ToLower().Contains(keyword) ||
+                            b.Colour.ToLower().Contains(keyword))
                 .ToListAsync();
             }
             catch (Exception ex)
