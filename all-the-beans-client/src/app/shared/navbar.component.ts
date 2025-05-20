@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../core/services/auth.service';
 
 @Component({
   standalone: true,
@@ -10,7 +11,12 @@ import { Router, RouterModule } from '@angular/router';
   imports: [CommonModule, RouterModule]
 })
 export class NavbarComponent {
-  constructor(private router: Router) {}
+  constructor(private router: Router,public auth: AuthService) {}
+
+  logout() {
+    this.auth.logout();
+    this.router.navigate(['/login']);
+  }
   
   goToBeans() {
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
