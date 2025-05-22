@@ -13,9 +13,18 @@ Frontend (Angular)
   - /all-the-beans-client/ - Angular frontend app
     
 3. Backend Setup (.NET API)
-- Create a database named AllTheBeansDb and onfigure connection string in appsettings.json
+- Create a database named AllTheBeansDb
+- Local Configuration (Secrets & Database)
+  This project does not commit secrets or machine-specific settings like connection strings or JWT keys. To run the backend locally, you'll need to configure your    environment securely.
+  {
   "ConnectionStrings": {
-    "DefaultConnection": "Server={{placeholder}};Database=AllTheBeansDb;Trusted_Connection=True;TrustServerCertificate=True;"
+    "Default": "Server=YOUR_SERVER_NAME;Database=AllTheBeansDb;Trusted_Connection=True;TrustServerCertificate=True;"
+  },
+  "Jwt": {
+    "Key": "ThisIsAVeryLongJwtAccessKeyForAuthenication",
+    "Issuer": "AllTheBeansAPI",
+    "Audience": "AllTheBeansClient"
+  }
   }
 - Run the application and the API will be available at https://localhost:7127
 - A test user login is available
