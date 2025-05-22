@@ -7,7 +7,7 @@ namespace AllTheBeans.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class CoffeeBeansController : ControllerBase
     {
         private readonly ICoffeeBeanService _coffeeBeanService;
