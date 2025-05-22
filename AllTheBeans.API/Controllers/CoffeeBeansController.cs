@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace AllTheBeans.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    [Authorize]
+    [Route("api/v1/[controller]")]
+    //[Authorize]
     public class CoffeeBeansController : ControllerBase
     {
         private readonly ICoffeeBeanService _coffeeBeanService;
@@ -28,13 +28,13 @@ namespace AllTheBeans.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
-            _logger.LogInformation("GET /api/coffeeBeans requested");
+            _logger.LogInformation("[API] GET /api/v1/coffeeBeans requested");
             const string cacheKey = "AllCoffeeBeans";
 
             var cached = await _cacheService.GetAsync<IEnumerable<CoffeeBeanDto>>(cacheKey);
             if (cached != null)
             {
-                _logger.LogInformation("Returned all beans from cache.");
+                _logger.LogInformation("[API] Returned all beans from cache.");
                 return Ok(cached);
             }
 
@@ -51,13 +51,20 @@ namespace AllTheBeans.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
         {
-            _logger.LogInformation("GET /api/coffeeBeans/{Id} requested", id);
+            _logger.LogInformation("[API] GET /api/v1/coffeeBeans/{Id} requested", id);
+
+            if (id <= 0)
+            {
+                _logger.LogWarning("[API] Invalid ID provided for GetById: {Id}", id);
+                return BadRequest("Invalid ID. ID must be a positive number.");
+            }
+
             var cacheKey = $"CoffeeBean:{id}";
 
             var cached = await _cacheService.GetAsync<CoffeeBeanDto>(cacheKey);
             if (cached != null)
             {
-                _logger.LogInformation("Returned coffee bean with ID {Id} from cache", id);
+                _logger.LogInformation("[API] Returned coffee bean with ID {Id} from cache", id);
                 return Ok(cached);
             }
 
@@ -74,7 +81,7 @@ namespace AllTheBeans.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] CreateCoffeeBeanDto dto)
         {
-            _logger.LogInformation("POST /api/coffeeBeans requested with payload {@CreateCoffeeBeanDto}", dto);
+            _logger.LogInformation("[API] POST /api/v1/coffeeBeans requested with payload {@CreateCoffeeBeanDto}", dto);
 
             if (!ModelState.IsValid)
             {
@@ -84,7 +91,7 @@ namespace AllTheBeans.API.Controllers
             var result = await _coffeeBeanService.CreateBeanAsync(dto);
             await _cacheService.RemoveAsync("AllCoffeeBeans");
 
-            _logger.LogInformation("Coffee bean created successfully: {Name} with ID {id}", dto.Name, result.Id);
+            _logger.LogInformation("[API] Coffee bean created successfully: {Name} with ID {id}", dto.Name, result.Id);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
@@ -94,7 +101,13 @@ namespace AllTheBeans.API.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] CreateCoffeeBeanDto dto)
         {
-            _logger.LogInformation("PUT /api/coffeeBeans/{Id} requested with payload {@CoffeeBeanDto}", id, dto);
+            _logger.LogInformation("[API] PUT /api/v1/coffeeBeans/{Id} requested with payload {@CoffeeBeanDto}", id, dto);
+
+            if (id <= 0)
+            {
+                _logger.LogWarning("[API] Invalid ID provided for Update: {Id}", id);
+                return BadRequest("Invalid ID. ID must be a positive number.");
+            }
 
             if (!ModelState.IsValid)
             {
@@ -105,7 +118,7 @@ namespace AllTheBeans.API.Controllers
             await _cacheService.RemoveAsync("AllCoffeeBeans");
             await _cacheService.RemoveAsync($"CoffeeBean:{id}");
 
-            _logger.LogInformation("Coffee bean with ID {Id} updated successfully", id);
+            _logger.LogInformation("[API] Coffee bean with ID {Id} updated successfully", id);
             return NoContent();
         }
 
@@ -117,13 +130,19 @@ namespace AllTheBeans.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int id)
         {
-            _logger.LogInformation("DELETE /api/coffeeBeans/{Id} requested", id);
+            _logger.LogInformation("[API] DELETE /api/v1/coffeeBeans/{Id} requested", id);
+
+            if (id <= 0)
+            {
+                _logger.LogWarning("[API] Invalid ID provided for Delete: {Id}", id);
+                return BadRequest("Invalid ID. ID must be a positive number.");
+            }
 
             await _coffeeBeanService.DeleteBeanAsync(id);
             await _cacheService.RemoveAsync("AllCoffeeBeans");
             await _cacheService.RemoveAsync($"CoffeeBean:{id}");
 
-            _logger.LogInformation("Coffee bean with ID {Id} deleted successfully", id);
+            _logger.LogInformation("[API] Coffee bean with ID {Id} deleted successfully", id);
             return NoContent();
         }
 
@@ -134,14 +153,14 @@ namespace AllTheBeans.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Search([FromQuery] string query)
         {
-            _logger.LogInformation("GET /api/coffeeBeans/search requested with query: {Query}", query);
+            _logger.LogInformation("[API] GET /api/v1/coffeeBeans/search requested with query: {Query}", query);
 
             var cacheKey = $"Search:{query.ToLower()}";
 
             var cached = await _cacheService.GetAsync<IEnumerable<CoffeeBeanDto>>(cacheKey);
             if (cached != null)
             {
-                _logger.LogInformation("Returned search results for query '{Query}' from cache", query);
+                _logger.LogInformation("[API] Returned search results for query '{Query}' from cache", query);
                 return Ok(cached);
             }
 
@@ -157,21 +176,21 @@ namespace AllTheBeans.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetBeanOfTheDay()
         {
-            _logger.LogInformation("GET /api/coffeeBeans/bean-of-the-day requested");
+            _logger.LogInformation("[API] GET /api/v1/coffeeBeans/bean-of-the-day requested");
 
             var cacheKey = $"BeanOfTheDay:{DateTime.UtcNow:yyyy-MM-dd}";
 
             var cached = await _cacheService.GetAsync<CoffeeBeanDto>(cacheKey);
             if (cached != null)
             {
-                _logger.LogInformation("Returned Bean of the Day from cache: {BeanName}", cached.Name);
+                _logger.LogInformation("[API] Returned Bean of the Day from cache: {BeanName}", cached.Name);
                 return Ok(cached);
             }
 
             var bean = await _coffeeBeanService.GetBeanOfTheDayAsync();
             await _cacheService.SetAsync(cacheKey, bean, TimeSpan.FromDays(1));
 
-            _logger.LogInformation("Bean of the Day cached: {BeanName}", bean.Name);
+            _logger.LogInformation("[API] Bean of the Day cached: {BeanName}", bean.Name);
             return Ok(bean);
             
         }

@@ -19,7 +19,7 @@ namespace AllTheBeans.Infrastructure.Repositories
         } 
         public async Task<BeanOfTheDay?> GetBeanByDateAsync(DateTime date)
         {
-            _logger.LogInformation("Fetching BeanOfTheDay for date {Date}", date);
+            _logger.LogInformation("[Repository] Fetching BeanOfTheDay for date {Date}", date);
 
             try
             {
@@ -29,7 +29,7 @@ namespace AllTheBeans.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while fetching BeanOfTheDay for date {Date}", date);
+                _logger.LogError(ex, "[Repository] Error occurred while fetching BeanOfTheDay for date {Date}", date);
                 throw new DataAccessException($"Failed to fetch BeanOfTheDay for {date:yyyy-MM-dd}.", ex);
             }
         }
@@ -37,28 +37,28 @@ namespace AllTheBeans.Infrastructure.Repositories
         public async Task<BeanOfTheDay?> GetPreviousDayBeanAsync()
         {
             var yesterday = DateTime.UtcNow.Date.AddDays(-1);
-            _logger.LogInformation("Fetching previous day's BeanOfTheDay (Date: {Date})", yesterday);
+            _logger.LogInformation("[Repository] Fetching previous day's BeanOfTheDay (Date: {Date})", yesterday);
             try
             {
                 return await GetBeanByDateAsync(yesterday);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while fetching previous day's BeanOfTheDay");
+                _logger.LogError(ex, "[Repository] Error occurred while fetching previous day's BeanOfTheDay");
                 throw;
             }
         }
 
         public async Task AddBeanOfTheDayAsync(BeanOfTheDay record)
         {
-            _logger.LogInformation("Adding BeanOfTheDay for date {Date} with CoffeeBean ID {CoffeeBeanId}", record.Date, record.CoffeeBeanId);
+            _logger.LogInformation("[Repository] Adding BeanOfTheDay for date {Date} with CoffeeBean ID {CoffeeBeanId}", record.Date, record.CoffeeBeanId);
             try
             {
                 await _context.BeanOfTheDays.AddAsync(record);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while adding BeanOfTheDay for date {Date}", record.Date);
+                _logger.LogError(ex, "[Repository] Error occurred while adding BeanOfTheDay for date {Date}", record.Date);
                 throw new DataAccessException("Failed to add BeanOfTheDay record.", ex);
             }
         }
