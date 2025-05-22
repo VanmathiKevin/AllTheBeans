@@ -20,7 +20,7 @@ namespace AllTheBeans.Infrastructure.Repositories
 
         public async Task<IEnumerable<CoffeeBean>> GetAllBeansAsync()
         {
-            _logger.LogInformation("Fetching all coffee beans from database");
+            _logger.LogInformation("[Repository] Fetching all coffee beans from database");
             try
             {
                 return await _context.CoffeeBeans
@@ -29,46 +29,46 @@ namespace AllTheBeans.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while fetching all coffee beans.");
+                _logger.LogError(ex, "[Repository] Error occurred while fetching all coffee beans.");
                 throw new DataAccessException("Failed to fetch all coffee beans.", ex);
             }
         }
             
         public async Task<CoffeeBean?> GetBeanByIdAsync(int id)
         {
-            _logger.LogInformation("Fetching coffee bean with ID {Id} from database", id);
+            _logger.LogInformation("[Repository] Fetching coffee bean with ID {Id} from database", id);
 
             try
             {
                 var bean = await _context.CoffeeBeans.FindAsync(id);
                 if (bean == null)
-                    _logger.LogWarning("Coffee bean with ID {Id} not found", id);
+                    _logger.LogWarning("[Repository] Coffee bean with ID {Id} not found", id);
                 return bean;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while fetching coffee bean with ID {Id}", id);
+                _logger.LogError(ex, "[Repository] Error occurred while fetching coffee bean with ID {Id}", id);
                 throw new DataAccessException($"Failed to retrieve coffee bean with ID {id}.", ex);
             }
         }
 
         public async Task AddBeanAsync(CoffeeBean bean)
         {
-            _logger.LogInformation("Adding new coffee bean: {Name}", bean.Name);
+            _logger.LogInformation("[Repository] Adding new coffee bean: {Name}", bean.Name);
             try
             {
                 await _context.CoffeeBeans.AddAsync(bean);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while adding coffee bean: {Name}", bean.Name);
+                _logger.LogError(ex, "[Repository] Error occurred while adding coffee bean: {Name}", bean.Name);
                 throw new DataAccessException("Failed to add new coffee bean.", ex);
             }
         }
             
         public async Task UpdateBeanAsync(CoffeeBean bean)
         {
-            _logger.LogInformation("Updating coffee bean with ID {Id}", bean.Id);
+            _logger.LogInformation("[Repository] Updating coffee bean with ID {Id}", bean.Id);
 
             try
             {
@@ -77,13 +77,13 @@ namespace AllTheBeans.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while updating coffee bean with ID {Id}", bean.Id);
+                _logger.LogError(ex, "[Repository] Error occurred while updating coffee bean with ID {Id}", bean.Id);
                 throw new DataAccessException($"Failed to update coffee bean with ID {bean.Id}.", ex);
             }
         }
         public async Task DeleteBeanAsync(CoffeeBean bean)
         {
-            _logger.LogInformation("Deleting coffee bean with ID {Id}", bean.Id);
+            _logger.LogInformation("[Repository] Deleting coffee bean with ID {Id}", bean.Id);
             try
             {
                 _context.CoffeeBeans.Remove(bean);
@@ -91,13 +91,13 @@ namespace AllTheBeans.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while deleting coffee bean with ID {Id}", bean.Id);
+                _logger.LogError(ex, "[Repository] Error occurred while deleting coffee bean with ID {Id}", bean.Id);
                 throw new DataAccessException($"Failed to delete coffee bean with ID {bean.Id}.", ex);
             }
         }
         public async Task<IEnumerable<CoffeeBean>> SearchBeansAsync(string keyword)
         {
-            _logger.LogInformation("Searching coffee beans with keyword '{Keyword}'", keyword);
+            _logger.LogInformation("[Repository] Searching coffee beans with keyword '{Keyword}'", keyword);
 
             try 
             {
@@ -109,7 +109,7 @@ namespace AllTheBeans.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred during search with keyword: {Keyword}", keyword);
+                _logger.LogError(ex, "[Repository] Error occurred during search with keyword: {Keyword}", keyword);
                 throw new DataAccessException("Search operation failed.", ex);
             }
         }

@@ -10,7 +10,7 @@ using System.Text;
 namespace AllTheBeans.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     public class AuthController : Controller
     {
         private readonly IConfiguration _configuration;
@@ -26,17 +26,17 @@ namespace AllTheBeans.API.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] Login request)
         {
-            _logger.LogInformation("Login attempt for user: {Username}", request.Username);
+            _logger.LogInformation("[API] Login attempt for user: {Username}", request.Username);
 
             //Simulate test login
             if (request.Username == "testuser" && request.Password == "password")
             {
                 var token = GenerateJwtToken(request.Username);
-                _logger.LogInformation("User {Username} authenticated successfully.", request.Username);
+                _logger.LogInformation("[API] User {Username} authenticated successfully.", request.Username);
                 return Ok(new { token });
             }
 
-            _logger.LogWarning("Authentication failed for user: {Username}", request.Username);
+            _logger.LogWarning("[API] Authentication failed for user: {Username}", request.Username);
             return Unauthorized("Invalid credentials");
         }
 

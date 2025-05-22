@@ -34,18 +34,18 @@ namespace AllTheBeans.Application.Services
         }
         public async Task<IEnumerable<CoffeeBeanDto>> GetAllBeansAsync()
         {
-            _logger.LogInformation("Fetching all coffee beans from the repository.");
+            _logger.LogInformation("[Service] Fetching all coffee beans.");
             var beans = await _coffeeBeanRepo.GetAllBeansAsync();
             return _mapper.Map<IEnumerable<CoffeeBeanDto>>(beans);
         }
 
         public async Task<CoffeeBeanDto?> GetBeanByIdAsync(int id)
         {
-            _logger.LogInformation("Fetching coffee bean with ID {Id}", id);
+            _logger.LogInformation("[Service] Fetching coffee bean with ID {Id}", id);
             var bean = await _coffeeBeanRepo.GetBeanByIdAsync(id);
             if(bean == null)
             {
-                _logger.LogWarning("Coffee bean with ID {Id} not found", id);
+                _logger.LogWarning("[Service] Coffee bean with ID {Id} not found", id);
                 throw new NotFoundException($"Coffee bean with ID {id} not found.");
             }
 
@@ -53,18 +53,18 @@ namespace AllTheBeans.Application.Services
         }
         public async Task<CoffeeBeanDto> CreateBeanAsync(CreateCoffeeBeanDto dto)
         {
-            _logger.LogInformation("Creating a new coffee bean: {@Dto}", dto);
+            _logger.LogInformation("[Service] Creating a new coffee bean: {@Dto}", dto);
             var bean = _mapper.Map<CoffeeBean>(dto);
 
             try
             {
                 await _coffeeBeanRepo.AddBeanAsync(bean);
                 await _unitOfWork.SaveChangesAsync();
-                _logger.LogInformation("Coffee bean created successfully with ID {Id}", bean.Id);
+                _logger.LogInformation("[Service] Coffee bean created successfully with ID {Id}", bean.Id);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to create coffee bean: {@Dto}", dto);
+                _logger.LogError(ex, "[Service] Failed to create coffee bean: {@Dto}", dto);
                 throw;
             }
 
@@ -72,7 +72,7 @@ namespace AllTheBeans.Application.Services
         }
         public async Task<bool> UpdateBeanAsync(int id, CreateCoffeeBeanDto dto)
         {
-            _logger.LogInformation("Updating coffee bean with ID {Id}", id);
+            _logger.LogInformation("[Service] Updating coffee bean with ID {Id}", id);
             var bean = await _coffeeBeanRepo.GetBeanByIdAsync(id);
 
             if (bean == null)
@@ -86,24 +86,24 @@ namespace AllTheBeans.Application.Services
                 _mapper.Map(dto, bean);
                 await _coffeeBeanRepo.UpdateBeanAsync(bean);
                 await _unitOfWork.SaveChangesAsync();
-                _logger.LogInformation("Coffee bean with ID {Id} updated successfully", id);
+                _logger.LogInformation("[Service] Coffee bean with ID {Id} updated successfully", id);
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to update coffee bean with ID {Id}", id);
+                _logger.LogError(ex, " [Service] Failed to update coffee bean with ID {Id}", id);
                 throw;
             }
         }
 
         public async Task<bool> DeleteBeanAsync(int id)
         {
-            _logger.LogInformation("Deleting coffee bean with ID {Id}", id);
+            _logger.LogInformation("[Service] Deleting coffee bean with ID {Id}", id);
             var bean = await _coffeeBeanRepo.GetBeanByIdAsync(id);
 
             if (bean == null)
             {
-                _logger.LogWarning("Cannot delete: coffee bean with ID {Id} not found", id);
+                _logger.LogWarning("[Service] Cannot delete: coffee bean with ID {Id} not found", id);
                 throw new NotFoundException($"Coffee bean with ID {id} not found.");
             }
 
@@ -111,25 +111,25 @@ namespace AllTheBeans.Application.Services
             {
                 await _coffeeBeanRepo.DeleteBeanAsync(bean);
                 await _unitOfWork.SaveChangesAsync();
-                _logger.LogInformation("Coffee bean with ID {Id} deleted successfully", id);
+                _logger.LogInformation("[Service] Coffee bean with ID {Id} deleted successfully", id);
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to delete coffee bean with ID {Id}", id);
+                _logger.LogError(ex, "[Service] Failed to delete coffee bean with ID {Id}", id);
                 throw;
             }
         }
         public async Task<IEnumerable<CoffeeBeanDto>> SearchBeansAsync(string query)
         {
-            _logger.LogInformation("Searching coffee beans with query: {Query}", query);
+            _logger.LogInformation("[Service] Searching coffee beans with query: {Query}", query);
             var results = await _coffeeBeanRepo.SearchBeansAsync(query);
             return _mapper.Map<IEnumerable<CoffeeBeanDto>>(results);
         }
 
         public async Task<CoffeeBeanDto> GetBeanOfTheDayAsync()
         {
-            _logger.LogInformation("Fetching Bean of the Day");
+            _logger.LogInformation("[Service] Fetching Bean of the Day from repository");
             var today = DateTime.UtcNow.Date;
 
             try
@@ -137,7 +137,7 @@ namespace AllTheBeans.Application.Services
                 var existing = await _beanOfTheDayRepo.GetBeanByDateAsync(today);
                 if (existing != null)
                 {
-                    _logger.LogInformation("Bean of the Day already selected: {BeanId}", existing.CoffeeBeanId);
+                    _logger.LogInformation("[Service] Bean of the Day already selected: {BeanId}", existing.CoffeeBeanId);
                     return _mapper.Map<CoffeeBeanDto>(existing.CoffeeBean);
                 }
 
@@ -155,12 +155,12 @@ namespace AllTheBeans.Application.Services
 
                 await _beanOfTheDayRepo.AddBeanOfTheDayAsync(newBeanOfTheDay);
                 await _unitOfWork.SaveChangesAsync();
-                _logger.LogInformation("New Bean of the Day selected: {BeanId}", selectedBean.Id);
+                _logger.LogInformation("[Service] New Bean of the Day selected: {BeanId}", selectedBean.Id);
                 return _mapper.Map<CoffeeBeanDto>(selectedBean);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while selecting Bean of the Day");
+                _logger.LogError(ex, "[Service] Error occurred while selecting Bean of the Day");
                 throw;
             }
         }
