@@ -1,0 +1,12 @@
+<div class="container" *ngIf="bean && !loading">
+    <h2>{{ bean.name }}</h2>
+    <img [src]="bean.imageUrl" alt="{{ bean.name }}" class="img-fluid mb-3" />
+    <p><strong>Description:</strong> {{ bean.description }}</p>
+    <p><strong>Country:</strong> {{ bean.country }}</p>
+    <p><strong>Colour:</strong> {{ bean.colour }}</p>
+    <p><strong>Price:</strong> £{{ bean.price | number: '1.2-2' }}</p>
+  </div>
+  
+  <div *ngIf="loading">Loading...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  

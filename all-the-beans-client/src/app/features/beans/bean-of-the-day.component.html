@@ -1,0 +1,18 @@
+<div class="container mt-4 text-center" *ngIf="!loading && bean">
+    <h2 class="bean-title mb-4">🌟 Bean of the Day</h2>
+  
+    <a [routerLink]="['/beans', bean.id]" class="text-decoration-none text-dark">
+      <div class="card bean-highlight mx-auto" style="max-width: 500px;">
+        <img [src]="bean.imageUrl" [alt]="bean.name" class="card-img-top bean-image" />
+  
+        <div class="card-body text-start">
+          <h4 class="card-title">{{ bean.name }}</h4>
+          <p class="card-text text-muted">{{ bean.country }} · {{ bean.colour }}</p>
+          <div class="fw-bold">£{{ bean.price | number: '1.2-2' }}</div>
+  
+          <span class="badge bg-success mt-3">Click for more details →</span>
+        </div>
+      </div>
+    </a>
+  </div>
+  
