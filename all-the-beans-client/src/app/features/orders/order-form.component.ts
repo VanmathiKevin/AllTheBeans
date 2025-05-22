@@ -44,6 +44,6 @@ export class OrderFormComponent implements OnInit {
 
     this.submitted = true;
     this.error = '';
-    console.log('Order submitted:', this.order);
+    //console.log('Order submitted:', this.order); - testing purpose as we don't have backend logic for this functionlaity.
   }
 }
