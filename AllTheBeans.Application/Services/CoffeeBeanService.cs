@@ -36,7 +36,6 @@ namespace AllTheBeans.Application.Services
         {
             _logger.LogInformation("[Service] Fetching all coffee beans.");
             var beans = await _coffeeBeanRepo.GetAllBeansAsync();
-            beans = null; 
             return _mapper.Map<IEnumerable<CoffeeBeanDto>>(beans);
         }
 
